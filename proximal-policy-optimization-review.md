@@ -12,5 +12,15 @@ $$
 
 위의 식에서 $$\pi_\theta$$ 는 stochastic policy이며 $$\hat{A}_t$$는 가치를 평가하는 네트워크에 의해 t의 시점에서 추정되는 Advantage입니다. 이 목표함수를 최대화 하기 위해 Reinforcement Learning에서는 파라미터\( $$\theta$$ \)에 대해서 Gradient를 사용하여 최대화하는 방향으로 업데이트합니다.
 
-PPO는 TRPO에서 파생되어 나오는 알고리즘이기에 TRPO에 대해 먼저 간단히 알아보겠습니다. 자세히 알고 싶다면 [Trust Region Policy Optimization](https://arxiv.org/pdf/1502.05477.pdf) 을 직접 읽어보시는 것을 권합니다.
+PPO는 TRPO에서 파생되어 나오는 알고리즘이기에 TRPO에 대해 먼저 간단히 알아보겠습니다. 자세히 알고 싶다면 [Trust Region Policy Optimization](https://arxiv.org/pdf/1502.05477.pdf) 을 직접 읽어보시는 것을 권합니다. TRPO에서는 목표함수인 surrogate objective\( $$\hat{E}_t[\dfrac{\pi_\theta(a_t|s_t)}{\pi_{\theta old}(a_t|s_t)}]$$ \)라는 것을 제안하며 안정적인 파라미터 업데이트를 위해 constraint를 이용합니다. constraint를 적용하기 위해 이전 스텝의 파라미터\( $$\theta_{old}$$ \)와 현재 스텝의 파라미터\( $$\theta$$ \)간의 차이를 이용하며 이 차이가 매우 클 경우 제한을 주어 신뢰구간\(Trust Region\)내에서의 업데이트를 수행합니다. TRPO에서는 이전 파라미터와 현재 파라미터의 차이를 KL-Divergence를 통해 구하며 최종적으로 아래의 식을 이용하여 파라미터를 업데이트합니다.
+
+$$
+maximize_\theta \hat{E}_t[\dfrac{\pi_\theta(a_t|s_t)}{\pi_{\theta old}(a_t|s_t)}\hat{A}_t] \\ subjected \; to \; \hat{E}_t[KL[\pi_{\theta old}(\cdot|s_t),\pi_\theta(\cdot|s_t)]]
+$$
+
+하지만 TRPO에서는 constraint optimization 문제를 해결하는데 Second-order KL-Divergence를 이용하거나 Conjugate Gradient를 사용하기 때문에 컴퓨터에게 많은 연산량을 요구합니다.
+
+이 문제로 PPO에서는 surrogate function을 업데이트할 때 신뢰 구간을 강제적으로 알고리즘을 설계하는 사람이 Clipping기법으로 설정함으로써 연산량을 줄이고 있습니다.
+
+
 
