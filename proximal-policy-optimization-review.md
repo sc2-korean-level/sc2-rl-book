@@ -20,7 +20,11 @@ $$
 
 하지만 TRPO에서는 constraint optimization 문제를 해결하는데 Second-order KL-Divergence를 이용하거나 Conjugate Gradient를 사용하기 때문에 컴퓨터에게 많은 연산량을 요구합니다.
 
-이 문제로 PPO에서는 surrogate function을 업데이트할 때 신뢰 구간을 강제적으로 알고리즘을 설계하는 사람이 Clipping기법으로 설정함으로써 연산량을 줄이고 있습니다.
+이 문제로 PPO에서는 surrogate function을 업데이트할 때 신뢰 구간을 강제적으로 알고리즘을 설계하는 사람이 아래의 식과 같 Clipping기법으로 설정함으로써 연산량을 줄이고 있습니다.
 
+$$
+maximize_\theta L^{CLIP}(\theta) = \hat{E}_t[min(r_t(\theta)\hat{A}_t), clip(r_t(\theta), 1-\epsilon, 1+\epsilon)\hat{A}_t]
+$$
 
+위의 식에서 $$r_t(\theta) = \dfrac{\pi_\theta(a_t|s_t)}{\pi_{\theta old}(a_t|s_t)}$$ 입니다. $$\epsilon$$ 은 하이퍼파라미터로 Continuous action일 때는 0.2, Discrete action일 때는 $$0.1 \times \alpha$$ 일 때가 가장 성능이 좋으며 $$\alpha$$ 는 학습률로 1에서 시작하여 점점 0으로 수렴합니다.
 
