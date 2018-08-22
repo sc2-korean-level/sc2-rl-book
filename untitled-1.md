@@ -2,6 +2,8 @@
 
 ## Policy\_net.py
 
+전체 코드는 [다음](https://github.com/sc2-korean-level/MoveToBeacon/blob/master/4wayBeacon_ppo/policy_net.py)을 참조하세요.
+
 ### Class Structure
 
 이 파일은 PPO의 Policy\_net이라는 클래스를 가지고 있으며 이 클래스는 다음과 같은 구조를 가지고 있습니다. 클래스 내부의 함수를 하나씩 설명하겠습니다.
@@ -95,4 +97,47 @@ def get_variables(self):
 def get_trainable_variables(self):
         return tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, self.scope)
 ```
+
+## ppo.py
+
+전체 코드는 [다음](https://github.com/sc2-korean-level/MoveToBeacon/blob/master/4wayBeacon_ppo/ppo.py)을 참조하세요.
+
+### Class Structure
+
+이 파일은 Policy\_net.py 파일에서 정의한 네트워크를 학습하기 위한 클래스가 있으며 다음과 같은 구조를 가지고 있습니다.
+
+```text
+└── PPOTrain(Class)
+    ├── __init__(Function)
+    ├── train(Function)
+    ├── get_summary(Function)
+    ├── assign_policy_parameters(Function)
+    └── get_gaes(Function)
+```
+
+### \_\_init\_\_\(self, Policy, Old\_Policy, gamma, clip\_value, c\_1, c\_2\)
+
+이 함수는 처음 클래스를 정의할 때 호출이 되는 함수이며 주로 클래스 내부에서 필요한 함수나 변수들을 정의하는 곳입니다. Policy와 Old\_Policy는 클래스 Policy\_net의 객체로 각각 현재 네트워크 \($$\pi_{\theta}, V_\theta$$\) 와 이전 네트워크\( $$$\pi_{\theta old}, V_{\theta old}$$ \)를 뜻합니다. gamma는 일반적으로 강화학습에서 쓰이는 Bellman Equation에서의 감가율\( $$\gamma$$ \)와 [General Advantage Estimation](https://arxiv.org/pdf/1506.02438.pdf)에서의 감가율\( $$\gamma$$ \) 두 가지 모두에 사용됩니다. clip\_value는 PPO 논문에서 나오는 $$\hat{E}_t[min(r_t(\theta)\hat{A}_t, clip(r_t(\theta), 1-\epsilon, 1+\epsilon)\hat{A}_t)]$$ 에서의  $$\epsilon$$ 을 뜻합니다. c\_1과 c\_2는 각각 $$maximize\; L^{CLIP+VF+S}=\hat{E}_t[L_t^{CLIP}(\theta)-c_1L_t^{VF}(\theta)+c_2S[\pi_\theta(s_t)]]$$ 에서의 $$c_1$$ 과 $$c_2$$ 를 뜻합니다.
+
+PPOTrain클래스 내부의 \_\_init\_\_함수는 매우 길기에 조금씩 분할해서 설명을 하겠습니다. 
+
+```python
+def __init__(self, Policy, Old_Policy, gamma=0.95, clip_value=0.2, c_1=1, c_2=0.01):
+
+    self.Policy = Policy
+    self.Old_Policy = Old_Policy
+    self.gamma = gamma
+
+    pi_trainable = self.Policy.get_trainable_variables()
+    old_pi_trainable = self.Old_Policy.get_trainable_variables()
+
+    with tf.variable_scope('assign_op'):
+        self.assign_ops = []
+        for v_old, v in zip(old_pi_trainable, pi_trainable):
+            self.assign_ops.append(tf.assign(v_old, v))
+```
+
+self.Policy는 입력받은 현재 네트워크 Policy를 해당 클래스의 내부 인스턴스로 재정의합니다. 또한 self.Old\_Policy, self.gamma도 마찬가지로 내부 인스턴스로 재정의합니다.  
+내부 인스턴스로 재정의한 self.Policy와 self.Old\_policy 네트워크의 파라미터들을 pi\_trainable과 old\_pi\_trainable로 정의합니다.  
+with tf.variable\_scope\('assign\_op'\)는 target 네트워크의 파라미터들\(old\_pi\_trainable,  $$\theta_{old}$$ \)을 main 네트워크의 파라미터\(pi\_trainable,  $$\theta$$ \)로 덮어쓰는 것입니다.
 
