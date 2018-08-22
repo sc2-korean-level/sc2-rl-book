@@ -28,3 +28,9 @@ $$
 
 위의 식에서 $$r_t(\theta) = \dfrac{\pi_\theta(a_t|s_t)}{\pi_{\theta old}(a_t|s_t)}$$ 입니다. $$\epsilon$$ 은 하이퍼파라미터로 Continuous action일 때는 0.2, Discrete action일 때는 $$0.1 \times \alpha$$ 일 때가 가장 성능이 좋으며 $$\alpha$$ 는 학습률로 1에서 시작하여 점점 0으로 수렴합니다.
 
+아래의 그림을 통해서 clip의 효과를 설명하겠습니다.
+
+![](.gitbook/assets/ppo.png)
+
+
+
