@@ -7,4 +7,5 @@
 * [Image](image.md)
 * [Proximal Policy Optimization Review](proximal-policy-optimization-review.md)
 * [4WayBeacon PPO Code Review](untitled-1.md)
+* [4WayBeacon Script Review](4waybeacon-script-review.md)
 
