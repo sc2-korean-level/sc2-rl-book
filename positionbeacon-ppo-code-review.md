@@ -2,6 +2,8 @@
 
 ## Policy\_net.py
 
+전체 코드는 [다음](https://github.com/sc2-korean-level/MoveToBeacon/blob/master/PositionBeacon/policy_net.py)을 참고하세요
+
 이 파일은 4WayBeacon\_ppo 디렉토리에 있는 Policy\_net.py와 같은 구조를 가지고 있으나 네트워크의 구성 부분이 다르기에 이 부분만 언급합니다.
 
 먼저 이 코드에 대해 설명하기 전에 Deepmind에서 낸 [첫 번째 스타크래프트2 관련 논문](https://arxiv.org/abs/1708.04782)에서 사용한 네트워크 구조 설명을 하겠습니다. 딥마인드에서 사용한 네트워크 구조에는 Atari-net, FullyConv, FullyConvLSTM으로 3가지가 있습니다. Atari-net과 FullyConv의 구조는 다음의 그림과 같습니다.
@@ -36,5 +38,6 @@ def __init__(self, name: str, temp=0.1):
         self.scope = tf.get_variable_scope().name
 ```
 
-전처리한 이미지를 이미지의 형태를 가지도록 input을 넣어주지 않고 1행을 가지는 list로 만들어서 입력을 가집니다. 그 후 tf.reshape를 통해 원하는 이미지의 형태로 재변환합니다. 그 후 layer\_2를 통해 128개의 kernel를 가지도록 Convolutional Neural Network에 통과시킵니다. 마지막으로 원하는 action\_space에 맞게 self.action\_probs를 출력합니다. 여기서 self.action\_probs는 위 그림에서의 Non-spatial aciton p
+전처리한 이미지를 이미지의 형태를 가지도록 input을 넣어주지 않고 1행을 가지는 list로 만들어서 입력을 가집니다. 그 후 tf.reshape를 통해 원하는 이미지의 형태로 재변환합니다. 그 후 layer\_2를 통해 128개의 kernel를 가지도록 Convolutional Neural Network에 통과시킵니다. 마지막으로 원하는 action\_space에 맞게 self.action\_probs를 출력합니다. 여기서 self.action\_probs는 위 그림에서의 Non-spatial aciton policy입니다.self.spatial\_probs는 위 그림에서의 Spatial action policy입니다. 이미지의 픽셀에 대한 정보를 얻어야 하기에 이미지의 사이즈 만큼\(16x16\) softmax로 출력합니다. 또한 위 그림에서의 Value에 해당하는 self.v\_preds를 출력합니다.  
+이상 이 다음으로는 4WayBeacon에서와 같은 코드이므로 생략하겠습니다.
 
