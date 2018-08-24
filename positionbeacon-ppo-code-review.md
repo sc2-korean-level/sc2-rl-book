@@ -53,5 +53,38 @@ def act(self, obs):
 
 전체 코드는 [다음](https://github.com/sc2-korean-level/MoveToBeacon/blob/master/PositionBeacon/ppo.py)을 참고하세요
 
-이 코드는 [4WayBeacon PPO Code의 ppo.py부분](https://chris-chris.gitbook.io/sc2-korean-level/~/drafts/-LKevI1qFVOR6h3f7zR1/primary/untitled-1)과 다른 것이 없으므로 설명을 생략합니다.
+먼저 이 코드에 대해 설명하기 전에 [첫 번째 스타크래프트2 관련 논문](https://arxiv.org/abs/1708.04782) 에서의 학습 방법을 설명하겠습니다. 앞에서 언급한 논문에서 전체 파라미터를 업데이트하는 방법은 일반적인 PPO와 같습니다. 하지만 일반적인 행동\(상, 하, 좌, 우를 고르는 것과 같은\)을 선택하는 방식과 달리 두 가지의 action policy\(Non-spatial action policy, Spatial action policy\)가 네트워크에서 출력되며 이를 합쳐서 한꺼번에 업데이트하는 방법을 취하고 있습니다. 수식으로 표현하자면 아래와 같습니다.
+
+$$
+maximize_\theta\;(G_t-v_\theta(s_t))\bigtriangledown_\theta log\pi_\theta(a_t|s_t)+\beta(G_t-v_\theta(s_t))\bigtriangledown_\theta v_\theta(s_t) \\ +\eta \Sigma_a\pi_\theta(a|s)log\pi_\theta(a|s)
+$$
+
+위의 식과 PPO에서 표현하고 있는 것이 다른 점은 $$G_t - v_\theta(s_t)$$ 입니다. 하지만 PPO에서 advantage\( $$\hat{A}_t$$ \)는 실제로 다음 상태의 가치\( $$R^a_s=G_t$$ \)와 현재 상태의 가치\( $$v_\theta(s_t)$$ \)의 차이를 뜻하는 것이므로 표현법만 다를 뿐이지 실제로 의미는 같습니다.
+
+중요한 것은 두가지의 action policy를 하나로 합치는 방법입니다. 논문에서 볼 수 있듯이 하나로 합쳐진 action policy는 아래와 같이 정의됩니다.
+
+$$
+\pi(a|s) = \Pi\pi(a^l|a^{<l},s)=\pi(a^1|s)\pi(a^2|s)\cdots\pi(a^l|s)
+$$
+
+본 코드에서는 action policy는 두 가지를 하나로 합치게 되며 다음과 같이 표현될 수 있습니다.
+
+$$
+\pi(a|s) = \pi(a^1|s)\pi(a^2|s)
+$$
+
+그리고 더 구체적으로 설명하자면 $$\pi(a^1|s)$$ 는 policy\_net.py에서의 self.act\_probs이며 $$\pi(a^2|s)$$ 는 policy\_net.py에서 self.spatial\_probs를 뜻합니다.
+
+이제 실제 코드를 설명하겠습니다. 대부분은 4WayBeacon PPO에 있는 ppo.py와 같으나 다른점만 설명하도록 하겠습니다.
+
+
+
+```python
+act_probs = self.Policy.act_probs
+spatial_probs = self.Policy.spatial_probs
+act_probs_old = self.Old_Policy.act_probs
+spatial_probs_old = self.Old_Policy.spatial_probs
+```
+
+act\_probs와 spatial\_probs는 main 네트워크에서 상태에 대한 출력 값이므로 각각 $$\pi(a^1|s), \pi(a^2|s)$$ 의 전체 확를 뜻합니다.  마찬가지로 act\_probs\_old와 spatial\_probs\_old는 target 네트워크에서 상태에 대한 출력 값이므로 전 $$\pi_{\theta old}(a^1|s), \pi_{\theta old}(a^2|s)$$ 을 뜻합니다.  예를 들면 act\_probs는 \[0.2, 0.5, 0.3\]을, spatial\_probs\_old는 \[0.1 0.003 0.05 ..... 0.003\]을 뜻합니다. 하지만 우리가 학습해야 하는 수치들은 실제로 선택한 행동에 대한 값을 이용하여야 하므로 이를 실제 행동에 대한 수치만 추출하는 과정을 거쳐야 합니다.
 
