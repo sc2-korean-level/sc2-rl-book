@@ -36,6 +36,5 @@ def __init__(self, name: str, temp=0.1):
         self.scope = tf.get_variable_scope().name
 ```
 
-전처리한 이미지를 이미지의 형태를 가지도록 input을 넣어주지 않고 1행을 가지는 list로 만들어서 입력을 가집니다. 그 후 tf.reshape를 통해 원하는 이미지의 형태로 재변환합니다. 그 후 layer\_2를 통해 128개의 kernel를 가지도록 Convolutional Neural Network에 통과시킵니다. 마지막으로 원하는 action\_space에 맞게 self.action\_probs를 출력합니다. 여기서 self.action\_probs는 위 그림에서의 Non-spatial aciton policy입니다.self.spatial\_probs는 위 그림에서의 Spatial action policy입니다. 이미지의 픽셀에 대한 정보를 얻어야 하기에 이미지의 사이즈 만큼\(16x16\) softmax로 출력합니다. 또한 위 그림에서의 Value에 해당하는 self.v\_preds를 출력합니다.  
-이상 이 다음으로는 4WayBeacon에서와 같은 코드이므로 생략하겠습니다.
+전처리한 이미지를 이미지의 형태를 가지도록 input을 넣어주지 않고 1행을 가지는 list로 만들어서 입력을 가집니다. 그 후 tf.reshape를 통해 원하는 이미지의 형태로 재변환합니다. 그 후 layer\_2를 통해 128개의 kernel를 가지도록 Convolutional Neural Network에 통과시킵니다. 마지막으로 원하는 action\_space에 맞게 self.action\_probs를 출력합니다. 여기서 self.action\_probs는 위 그림에서의 Non-spatial aciton p
 
