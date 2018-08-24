@@ -77,7 +77,15 @@ $$
 
 이제 실제 코드를 설명하겠습니다. 대부분은 4WayBeacon PPO에 있는 ppo.py와 같으나 다른점만 설명하도록 하겠습니다.
 
+```python
+self.actions = tf.placeholder(dtype=tf.int32, shape=[None], name='actions')
+self.space = tf.placeholder(dtype=tf.int32, shape=[None], name='space')
+self.rewards = tf.placeholder(dtype=tf.float32, shape=[None], name='rewards')
+self.v_preds_next = tf.placeholder(dtype=tf.float32, shape=[None], name='v_preds_next')
+self.gaes = tf.placeholder(dtype=tf.float32, shape=[None], name='gaes')
+```
 
+학습에 사용할 실제 선택한 non-spatial action\(self.actions\), spatial action\(self.space\), rewards\( $$r^s_a$$ , self. rewards\), v\_preds\_next\( $$V(s_{t+1}$$ \), self.v\_preds\_next\), gaes\(self.gaes\)를 각각 tf.placeholder로 받아오는 변수들입니다.
 
 ```python
 act_probs = self.Policy.act_probs
@@ -87,4 +95,26 @@ spatial_probs_old = self.Old_Policy.spatial_probs
 ```
 
 act\_probs와 spatial\_probs는 main 네트워크에서 상태에 대한 출력 값이므로 각각 $$\pi(a^1|s), \pi(a^2|s)$$ 의 전체 확를 뜻합니다.  마찬가지로 act\_probs\_old와 spatial\_probs\_old는 target 네트워크에서 상태에 대한 출력 값이므로 전 $$\pi_{\theta old}(a^1|s), \pi_{\theta old}(a^2|s)$$ 을 뜻합니다.  예를 들면 act\_probs는 \[0.2, 0.5, 0.3\]을, spatial\_probs\_old는 \[0.1 0.003 0.05 ..... 0.003\]을 뜻합니다. 하지만 우리가 학습해야 하는 수치들은 실제로 선택한 행동에 대한 값을 이용하여야 하므로 이를 실제 행동에 대한 수치만 추출하는 과정을 거쳐야 합니다.
+
+```python
+act_probs = act_probs * tf.one_hot(indices=self.actions, depth=act_probs.shape[1])
+act_probs = tf.reduce_sum(act_probs, axis=1)
+spatial_probs = spatial_probs * tf.one_hot(indices=self.space, depth=spatial_probs.shape[1])
+spatial_probs = tf.reduce_sum(spatial_probs, axis=1)
+action_probs = tf.clip_by_value(act_probs * spatial_probs, 1e-10, 1.0)
+```
+
+위에서 정의한 act\_probs와 실제 선택한 non-spatial action을 조합하여 실제 행동에 대한 수치만을 추출하는 작업입니다. 예를들면 act\_probs가 \[0.2 0.5 0.3\], non-spatial action이 1이라면 tf.reduce\_sum을 거친 act\_probs는 0.5가 됩니다. 이 작업을 거쳐 비로소 진정한 의미의 $$\pi_\theta(a^1|s)$$ 이 됩니다. 그 후 마지막 줄의 action\_probs는 $$\pi_\theta(a|s)$$\( $$\pi_\theta(a^1|s)\pi_\theta(a^2|s)$$ \)를 뜻하게 됩니다.
+
+```python
+act_probs_old = act_probs_old * tf.one_hot(indices=self.actions, depth=act_probs_old.shape[1])
+act_probs_old = tf.reduce_sum(act_probs_old, axis=1)
+spatial_probs_old = spatial_probs_old * tf.one_hot(indices=self.space, depth=spatial_probs_old.shape[1])
+spatial_probs_old = tf.reduce_sum(spatial_probs_old, axis=1)
+action_probs_old = tf.clip_by_value(act_probs_old * spatial_probs_old, 1e-10, 1.0)
+```
+
+같은 과정을 거쳐 action\_probs\_old는 $$\pi_{\theta old}(a|s)$$ \( $$\pi_{\theta old}(a^1|s)\pi_{\theta old}(a^2|s)$$ \)를 뜻합니다.
+
+이 외의 코드들은 4WayBeacon PPO Code Review내에 있는 내용과 같으므로 생략하겠습니다.
 
