@@ -45,5 +45,15 @@ if action == 2: actions_ = actions.FunctionCall(actions.FUNCTIONS.no_op.id, [])
 
 다음 확률에 기반하여 선택하기 위해서는 np.random.choice의 argument인 p에는 확률을 뜻하는 행렬이 들어가게 되는데 행렬의 각 인덱스 값들의 합이 1이 되어야합니다. 그렇기 때문에 z/sum\(z\)를 이용하여 정규화한 후 p로 정의합니다. 그리고 본 코드에서는 3가지의 non-spatial action policy\(행동 안함, 마린을 선택함, 이동함\)가 존재하기 때문에 np.random.choice를 통해 실제 행동할 것을 선택합니다.
 
-다음 position의 경우는 실제 이미지의 포인트 중 한 점을 뜻합니다. spatial\_policy\[0\]는 네트워크의 출력 중 spatial action policy를 뜻하며 1x\(image의 가로\)x\(image의 세로\)의 형태를 띄고 있습니다. 본 코드에서는 16x16의 이미지를 사용하기에 1x256의 크기를 가지는 행렬로 이루어져 있습니다. spatial action policy는 각각 점을 선택할 확률을 뜻하는 값들로 이루어져 있으며 그 확률에 기반하여 한 점을 선택하고 그 값을 position으로 정의합니다. x, y는 position의 값을 이미지에서 가로 세로에 맞게 변환합니다. 예를 들어 position의 값이 182라면 x는  6, y는 11을 뜻합니다. 아래의 그림을 참조하면 더 쉽게 이해할 수 있습니다.
+다음 position의 경우는 실제 이미지의 포인트 중 한 점을 뜻합니다. spatial\_policy\[0\]는 네트워크의 출력 중 spatial action policy를 뜻하며 1x\(image의 가로\)x\(image의 세로\)의 형태를 띄고 있습니다. 본 코드에서는 16x16의 이미지를 사용하기에 1x256의 크기를 가지는 행렬로 이루어져 있습니다. spatial action policy는 각각 점을 선택할 확률을 뜻하는 값들로 이루어져 있으며 그 확률에 기반하여 한 점을 선택하고 그 값을 position으로 정의합니다. x, y는 position의 값을 이미지에서 가로 세로에 맞게 변환합니다. 예를 들어 position의 값이 182라면 x는  6, y는 11을 뜻합니다. 아래의 그림을 참조하면 더 쉽게 이해할 수 있습니다. 아래의 그림은 4x4의 이미지에 대한 예시입니다.
+
+![](.gitbook/assets/2018-08-25-2.40.53.png)
+
+```python
+if action == 0: actions_ = actions.FunctionCall(_MOVE_SCREEN, [_NOT_QUEUED, [x, y]])
+if action == 1: actions_ = actions.FunctionCall(actions.FUNCTIONS.select_army.id, [_SELECT_ALL])
+if action == 2: actions_ = actions.FunctionCall(actions.FUNCTIONS.no_op.id, [])
+```
+
+이전에 얻은 action과 이미지의 
 
