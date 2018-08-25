@@ -71,6 +71,8 @@ spatial.append(position)
 rewards.append(reward)
 ```
 
+4WayBeacon PPO 와 달리 본 코드에서는 딥마인드에서 구현한 코드와의 성능 비교를 하기 위해 reward를 따로 지정하지 않고 환경에서 내어주는 값을 사용합니다\(reward = obs\[0\].reward\). 그리고 에피소드가 끝났음을 알기 위한 파라미터인 done을 환경에서 제공하는 값을 사용합니다\(done = obs\[0\].step\_type==environment.StepType.LAST\)
+
 위에서 선택한 non-spatial action policy, spatial action policy, state, State-Value, reward를 메모리에 저장합니다.
 
 ```python
