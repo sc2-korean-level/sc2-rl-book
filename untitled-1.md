@@ -241,7 +241,7 @@ def assign_policy_parameters(self):
 
 이 함수는 Bellman Equation에서 얻은 가치의 값을 이용해 General Advantage Estimation을 수행하는 함수합니다. 구체적으로 General Advantage Estimation에 대해 설명하지는 않지만 본 코드에서는 $$TD(\lambda)$$ 를 1로 하며 $$\gamma$$ 도 0.99로 설정합니다.
 
-```text
+```python
 def get_gaes(self, rewards, v_preds, v_preds_next):
     deltas = [r_t + self.gamma * v_next - v for r_t, v_next, v in zip(rewards, v_preds_next, v_preds)]
     # calculate generative advantage estimator(lambda = 1), see ppo paper eq(11)
