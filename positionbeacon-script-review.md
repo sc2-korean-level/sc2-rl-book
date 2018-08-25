@@ -71,7 +71,7 @@ spatial.append(position)
 rewards.append(reward)
 ```
 
-4WayBeacon PPO 와 달리 본 코드에서는 딥마인드에서 구현한 코드와의 성능 비교를 하기 위해 reward를 따로 지정하지 않고 환경에서 내어주는 값을 사용합니다\(reward = obs\[0\].reward\). 그리고 에피소드가 끝났음을 알기 위한 파라미터인 done을 환경에서 제공하는 값을 사용합니다\(done = obs\[0\].step\_type==environment.StepType.LAST\)
+4WayBeacon PPO 와 달리 본 코드에서는 딥마인드에서 구현한 코드와의 성능 비교를 하기 위해 reward를 따로 지정하지 않고 환경에서 내어주는 값을 사용합니다\(reward = obs\[0\].reward\). 이 값은 계속 0을 출력하고 있으며 마린이 비콘에 도착하는 순간 1을 출력합니다. 그리고 에피소드가 끝났음을 알기 위한 파라미터인 done을 환경에서 제공하는 값을 사용합니다\(done = obs\[0\].step\_type==environment.StepType.LAST\). 이 값은 특정 시간에 다다르면 True를 출력하며 그 외의 값은 False를 뜻합니다.
 
 위에서 선택한 non-spatial action policy, spatial action policy, state, State-Value, reward를 메모리에 저장합니다.
 
@@ -101,5 +101,9 @@ if done:
 
 에피소드가 끝났을 경우 메모리에 저장된 모든 데이터들을 이용하지 않고 64개의 인덱스에 맞게 무작위하게 추출을 하여 학습을 하게 됩니다.
 
+위의 코드를 통해 결과를 보면 다음과 같습니다.
 
+![](.gitbook/assets/movetobeacon.png)
+
+약 10,000 에피소드를 지나면 reward의 포화상태에 다다르는 것을 볼 수 있으며 주어진 시간내에 20번 정도 비콘에 다다르는 것을 확인할 수 있습니다.
 
