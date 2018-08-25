@@ -40,7 +40,7 @@ $$
 
 ## Update Algorithm
 
-글의 초반부에서 설명하였듯이 PPO는 [Advantage Actor Critic](https://blog.openai.com/baselines-acktr-a2c/) 알고리즘 중 하나로 볼 수 있습니다. Advantage Actor Critic을 업데이트할 때와 같은 방법으로 업데이트 합니다. PPO에서는 Surrogate Function\( $$L^{CLIP})$$ 을 최대화하는 방향으로 그리고 많은 Policy Gradient기법에서 사용하고 있는 Exploration기법인 Action Entropy\( $$S[\pi_\theta]$$ \)를 최대화 하는 방향으로 Actor 네트워크를 업데이트하며 State-Value\( $$L^{VF}$$ \)의 차이를 최소화 하는 방향으로 Critic 네트워크를 업데이트합니다. 이를 다시 수ㄱ식으로 표현하면 다음과 같습니다.
+글의 초반부에서 설명하였듯이 PPO는 [Advantage Actor Critic](https://blog.openai.com/baselines-acktr-a2c/) 알고리즘 중 하나로 볼 수 있습니다. Advantage Actor Critic을 업데이트할 때와 같은 방법으로 업데이트 합니다. PPO에서는 Surrogate Function\( $$L^{CLIP})$$ 을 최대화하는 방향으로 그리고 많은 Policy Gradient기법에서 사용하고 있는 Exploration기법인 Action Entropy\( $$S[\pi_\theta]$$ \)를 최대화 하는 방향으로 Actor 네트워크를 업데이트하며 State-Value\( $$L^{VF}$$ \)의 차이를 최소화 하는 방향으로 Critic 네트워크를 업데이트합니다. 이를 다시 수식으로 표현하면 다음과 같습니다.
 
 $$
 maximize\;L^{CLIP}(\theta) = \hat{E}_t[min(r_t(\theta)\hat{A}_t), clip(r_t(\theta), 1-\epsilon, 1+\epsilon)\hat{A}_t]
