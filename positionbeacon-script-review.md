@@ -55,5 +55,49 @@ if action == 1: actions_ = actions.FunctionCall(actions.FUNCTIONS.select_army.id
 if action == 2: actions_ = actions.FunctionCall(actions.FUNCTIONS.no_op.id, [])
 ```
 
-이전에 얻은 action과 이미지의 
+이전에 얻은 action에 의해서 세 가지 종류의 실제 pysc2의 env.step\(\)에 들어가는 action\_를 정의합니다. action이 0일 경우 특정 지점으로 움직여라, 1일 경우 마린을 선택하라 그리고 2일 경우 아무 행동도 하지 말아라를 뜻합니다.
+
+```python
+obs = env.step(actions=[actions_])
+marine_map = (obs[0].observation.feature_screen.base[5] == 1)
+beacon_map = (obs[0].observation.feature_screen.base[5] == 3)
+next_state = np.dstack([marine_map, beacon_map]).reshape(16*16*2).astype(int)
+reward = obs[0].reward
+done = obs[0].step_type == environment.StepType.LAST
+observations.append(state)
+actions_list.append(action)
+v_preds.append(np.asscalar(v_pred))
+spatial.append(position)
+rewards.append(reward)
+```
+
+위에서 선택한 non-spatial action policy, spatial action policy, state, State-Value, reward를 메모리에 저장합니다.
+
+```python
+if done:
+    v_preds_next = v_preds[1:] + [0]
+    gaes = PPO.get_gaes(rewards, v_preds, v_preds_next)
+    observations = np.reshape(observations, [-1, 16*16*2])
+    actions_list = np.array(actions_list).astype(dtype=np.int32)
+    spatial = np.array(spatial).astype(dtype=np.int32)
+    rewards = np.array(rewards).astype(dtype=np.float32)
+    v_preds_next = np.array(v_preds_next).astype(dtype=np.float32)
+    gaes = np.array(gaes).astype(dtype=np.float32)
+                
+    PPO.assign_policy_parameters()
+    inp = [observations, actions_list, spatial, rewards, v_preds_next, gaes]
+    for epoch in range(10):
+        sample_indices = np.random.randint(low=0, high=observations.shape[0], size=64)  # indices are in [low, high)
+        sampled_inp = [np.take(a=a, indices=sample_indices, axis=0) for a in inp]  # sample training data
+        PPO.train(obs=sampled_inp[0],
+            spatial=sampled_inp[2],
+            actions=sampled_inp[1],
+            rewards=sampled_inp[3],
+            v_preds_next=sampled_inp[4],
+            gaes=sampled_inp[5])
+```
+
+에피소드가 끝났을 경우 메모리에 저장된 모든 데이터들을 이용하지 않고 64개의 인덱스에 맞게 무작위하게 추출을 하여 학습을 하게 됩니다.
+
+
 
