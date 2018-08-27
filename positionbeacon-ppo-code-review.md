@@ -59,7 +59,7 @@ $$
 maximize_\theta\;(G_t-v_\theta(s_t))\bigtriangledown_\theta log\pi_\theta(a_t|s_t)+\beta(G_t-v_\theta(s_t))\bigtriangledown_\theta v_\theta(s_t) \\ +\eta \Sigma_a\pi_\theta(a|s)log\pi_\theta(a|s)
 $$
 
-위의 식과 PPO에서 표현하고 있는 것이 다른 점은 $$G_t - v_\theta(s_t)$$ 입니다. 하지만 PPO에서 advantage\( $$\hat{A}_t$$ \)는 실제로 다음 상태의 가치\( $$R^a_s=G_t$$ \)와 현재 상태의 가치\( $$v_\theta(s_t)$$ \)의 차이를 뜻하는 것이므로 표현법만 다를 뿐이지 실제로 의미는 같습니다.
+위의 식과 PPO에서 표현하고 있는 것이 다른 점은 $$G_t - v_\theta(s_t)$$ 입니다. 하지만 PPO에서 advantage\( $$\hat{A}_t$$ \)는 실제로 다음 상태의 가치\( $$G_t=\Sigma^\infty_{k=0}R_{t+k+1}$$ \)와 현재 상태의 가치\( $$v_\theta(s_t)$$ \)의 차이를 뜻하는 것이므로 표현법만 다를 뿐이지 실제로 의미는 같습니다.
 
 중요한 것은 두가지의 action policy를 하나로 합치는 방법입니다. 논문에서 볼 수 있듯이 하나로 합쳐진 action policy는 아래와 같이 정의됩니다.
 
