@@ -17,4 +17,5 @@
 * [1-4. Information Theory](1-4.-information-theory.md)
 * [1-5. Algorithms](1-5.-algorithms.md)
 * [Advantage Actor Critic Review](untitled.md)
+* [4WayBeacon A2C Code Review](4waybeacon-a2c-code-review.md)
 
