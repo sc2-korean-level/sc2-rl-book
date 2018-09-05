@@ -50,5 +50,5 @@ $$
 \bigtriangledown_\theta J(\theta) = E[\bigtriangledown_\theta log \pi_\theta(s,a) A(s,a)]
 $$
 
-이를 [코드](https://github.com/sc2-korean-level/MoveToBeacon/blob/master/4wayBeacon_a2c/a2c.py)로 구현하면 다음과 같습니다.
+
 
