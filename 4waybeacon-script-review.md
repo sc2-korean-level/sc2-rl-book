@@ -1,4 +1,4 @@
-# 4WayBeacon Script Review
+# 4WayBeacon PPO Script Review
 
 이 파일은 앞에서 정의한 Policy\_net.py와 ppo.py를 이용하여 실제 학습을 수행하는 파일입니다. 전체 코드는 [다음](https://github.com/sc2-korean-level/MoveToBeacon/blob/master/4wayBeacon_ppo/ex.py)을 참조하시면 됩니다.
 

@@ -6,7 +6,7 @@
 * [Image](image.md)
 * [Proximal Policy Optimization Review](proximal-policy-optimization-review.md)
 * [4WayBeacon PPO Code Review](untitled-1.md)
-* [4WayBeacon Script Review](4waybeacon-script-review.md)
+* [4WayBeacon PPO Script Review](4waybeacon-script-review.md)
 * [PositionBeacon PPO Code Review](positionbeacon-ppo-code-review.md)
 * [PositionBeacon Script Review](positionbeacon-script-review.md)
 * [CollectMineralShards Script Review](collectmineralshards-script-review.md)
@@ -18,4 +18,5 @@
 * [1-5. Algorithms](1-5.-algorithms.md)
 * [Advantage Actor Critic Review](untitled.md)
 * [4WayBeacon A2C Code Review](4waybeacon-a2c-code-review.md)
+* [4WayBeacon A2C Script Review](4waybeacon-a2c.md)
 
