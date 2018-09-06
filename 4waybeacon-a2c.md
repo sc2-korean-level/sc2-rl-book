@@ -44,5 +44,5 @@ if done:
     open_file_and_save('4wayBeacon_a2c/reward.csv', [sum(rewards)])                
 ```
 
-에피소드가 종료되을 경우 정책 네트워크와 가치 네트워크를 학습하고 그 모델
+에피소드가 종료되을 경우 정책 네트워크와 가치 네트워크를 학습하고 그 모델을 경로에 저장합니다. 그리고 에피소드 별로 Reward를 print합니다. 그리고 csv파일 얻은 Reward를 저장합니다.
 
